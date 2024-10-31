@@ -56,17 +56,17 @@ class Categoria (models.Model):
     def __str__(self):
         return self.nombre  
     
-class Factores(models.Model):
-    nombre = models.CharField(max_length=200)
-    fecha_creacion  = models.DateTimeField()
-    usuario = models.ForeignKey(User, models.DO_NOTHING)
-    state = models.BooleanField(default=True) 
+# class Factores(models.Model):
+#     nombre = models.CharField(max_length=200)
+#     fecha_creacion  = models.DateTimeField()
+#     usuario = models.ForeignKey(User, models.DO_NOTHING)
+#     state = models.BooleanField(default=True) 
 
-    class Meta:
-        db_table = 'Factores'
+#     class Meta:
+#         db_table = 'Factores'
 
-    def __str__(self):
-        return self.nombre    
+#     def __str__(self):
+#         return self.nombre    
     
 class Umedida (models.Model):
     nombre = models.CharField(max_length=200)
@@ -88,33 +88,20 @@ class Proveedor (models.Model):
     email=models.CharField(max_length=100, blank=True, null=True)
     telefono=models.CharField(max_length=100, blank=True, null=True)
     fecha_creacion  = models.DateTimeField()
+    empresa=models.ForeignKey(Empresa, models.DO_NOTHING)
     usuario = models.ForeignKey(User, models.DO_NOTHING)
     state = models.BooleanField(default=True)
     
-
     class Meta:
         db_table = 'Proveedor'
 
     def __str__(self):
         return self.nombre    
     
-class CodigosBarra(models.Model):
-    codbarra = models.CharField(max_length=255)
-    fecha_creacion  = models.DateTimeField()
-    usuario = models.ForeignKey(User, models.DO_NOTHING)
-    state = models.BooleanField(default=True)
-    
-
-    class Meta:
-        db_table = 'CodigosBarra'
-
-    def __str__(self):
-        return self.codbarra  
-
 
 class Productos(models.Model):
     #Relacionado con la hacienda o sunat
-    codbarra=models.ForeignKey(CodigosBarra, models.DO_NOTHING)
+    #codbarra=models.ForeignKey(CodigosBarra, models.DO_NOTHING)
     codcabys= models.CharField(max_length=255)
     nombre=models.CharField(max_length=255)
     categoria=models.ForeignKey(Categoria, models.DO_NOTHING,blank=True, null=True)
@@ -123,6 +110,7 @@ class Productos(models.Model):
     precio_real=models.DecimalField(max_digits=7,decimal_places=2)
     precio_ofrecido=models.DecimalField(max_digits=7,decimal_places=2)
     umedida=models.ForeignKey(Umedida, models.DO_NOTHING)
+    empresa=models.ForeignKey(Empresa, models.DO_NOTHING)
     logo_producto = models.CharField(max_length=400,blank=True,null=True)
     fecha_creacion  = models.DateTimeField()
     usuario = models.ForeignKey(User, models.DO_NOTHING)
@@ -134,20 +122,34 @@ class Productos(models.Model):
 
     def __str__(self):
         return self.nombre
-
-class Inventario(models.Model):
-    empresa = models.ForeignKey(Empresa, models.DO_NOTHING)
-    producto = models.ForeignKey(Productos, models.DO_NOTHING)
-    cantidad = models.IntegerField()
+    
+class CodigosBarra(models.Model):
+    codigo = models.CharField(max_length=255)
+    producto = models.ForeignKey(Productos, models.DO_NOTHING,null=True,blank=True)
     fecha_creacion  = models.DateTimeField()
     usuario = models.ForeignKey(User, models.DO_NOTHING)
     state = models.BooleanField(default=True)
+    
 
     class Meta:
-        db_table = 'Inventario'
-       
+        db_table = 'CodigosBarra'
+
     def __str__(self):
-        return self. empresa
+        return f"Barra:{self.codigo} del Producto:{self.producto.nombre}"      
+
+# class Inventario(models.Model):
+#     empresa = models.ForeignKey(Empresa, models.DO_NOTHING)
+#     producto = models.ForeignKey(Productos, models.DO_NOTHING)
+#     cantidad = models.IntegerField()
+#     fecha_creacion  = models.DateTimeField()
+#     usuario = models.ForeignKey(User, models.DO_NOTHING)
+#     state = models.BooleanField(default=True)
+
+#     class Meta:
+#         db_table = 'Inventario'
+       
+#     def __str__(self):
+#         return self. empresa
     
 class Cliente(models.Model):
     nombre = models.CharField(max_length=200)
@@ -155,6 +157,7 @@ class Cliente(models.Model):
     direccion=models.CharField(max_length=150, blank=True, null=True)
     email=models.CharField(max_length=100, blank=True, null=True)
     telefono=models.CharField(max_length=100, blank=True, null=True)
+    empresa=models.ForeignKey(Empresa, models.DO_NOTHING)
     fecha_creacion  = models.DateTimeField()
     usuario = models.ForeignKey(User, models.DO_NOTHING)
     state = models.BooleanField(default=True)
@@ -166,21 +169,37 @@ class Cliente(models.Model):
         return self.nombre      
 
 
-class Factura(models.Model):
+class FacturaCabecera(models.Model):
     nrofactura=models.CharField(max_length=8,primary_key=True)
     cliente=models.ForeignKey(Cliente, models.DO_NOTHING)
     fecha_factura=models.DateField(blank=True, null=True)
     usuario = models.ForeignKey(User, models.DO_NOTHING)
+    empresa=models.ForeignKey(Empresa, models.DO_NOTHING)
     con_sin_igv=models.BooleanField()
     descuento =models.DecimalField(max_digits=7,decimal_places=2)
     impuesto=models.DecimalField(max_digits=7,decimal_places=2)
     state = models.BooleanField(default=True)
 
     class Meta:
-        db_table = 'Factura'
+        db_table = 'FacturaCabecera'
         
 
     def __str__(self):
         return self.nrofactura
+    
+class FacturaDetalle(models.Model):
+    factura = models.ForeignKey(FacturaCabecera, models.DO_NOTHING)
+    productos = models.ForeignKey(Productos, models.DO_NOTHING)
+    cantidad = models.IntegerField()
+    descuento =models.DecimalField(max_digits=7,decimal_places=2)
+
+    class Meta:
+        db_table = 'FacturaDetalle'
+        
+
+    def __str__(self):
+        return self.factura
+
+        
 
 

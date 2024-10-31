@@ -65,7 +65,7 @@ WSGI_APPLICATION = 'fact_elec.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbFac_Elec',
+        'NAME': 'DbFacturacionElec',
         'USER': 'admin',
         'PASSWORD': 'admin',
         'HOST': 'localhost',
