@@ -157,10 +157,10 @@ class Cliente(models.Model):
     direccion=models.CharField(max_length=150, blank=True, null=True)
     email=models.CharField(max_length=100, blank=True, null=True)
     telefono=models.CharField(max_length=100, blank=True, null=True)
-    empresa=models.ForeignKey(Empresa, models.DO_NOTHING)
-    fecha_creacion  = models.DateTimeField()
-    usuario = models.ForeignKey(User, models.DO_NOTHING)
-    state = models.BooleanField(default=True)
+    empresa=models.ForeignKey(Empresa, models.DO_NOTHING,blank=True, null=True)
+    fecha_creacion  = models.DateTimeField(blank=True, null=True)
+    usuario = models.ForeignKey(User, models.DO_NOTHING,blank=True, null=True)
+    state = models.BooleanField(default=True,blank=True, null=True)
 
     class Meta:
         db_table = 'Cliente'
